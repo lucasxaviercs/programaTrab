@@ -1,7 +1,8 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 int main(int argc, char *argv[]) {
-    int funcionalidade = atoi(argv[0]);
+    int funcionalidade = atoi(argv[1]);
     switch (funcionalidade) {
         case 1:
             printf("Funcionalidade 1 selecionada.\n");
