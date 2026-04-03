@@ -69,3 +69,48 @@ void CreateTable(char *arquivoEntrada, char *arquivoSaida){
     BinarioNaTela(arquivoSaida);
 
 }
+
+void RecuperacaoRRN(char *arquivoEntrada, int RRN){
+    // Abertura do arquivo BIN para leitura
+    FILE *arquivoBIN = fopen(arquivoEntrada, "rb");
+    // Abortando funcionalidade caso ocorra erro na abertura do arquivo BIN
+    if(arquivoBIN == NULL){
+        MensagemErro();
+        return;
+    }
+
+    // Leitura do cabeçalho para obter o próximo RRN disponível
+    Header cabecalho;
+    cabecalho = LerCabecalhoBIN(arquivoBIN, cabecalho);
+
+    // Se o RRN for inválido (negativo ou além dos registros existentes), aborta
+    if(RRN < 0 || RRN >= cabecalho.proxRRN){
+        MensagemErro();
+        fclose(arquivoBIN);
+        return;
+    }
+
+    // Cálculo do byte offset do registro para dar fseek
+    int byteoffset = TAM_CABECALHO + RRN * TAM_REGISTRO;
+    fseek(arquivoBIN, byteoffset, SEEK_SET);
+
+    // Leitura do registro na posição calculada
+    Registro registroDados;
+    registroDados.nomeEstacao = NULL;
+    registroDados.nomeLinha = NULL;
+    registroDados = LerRegistroBIN(arquivoBIN, registroDados);
+
+    // Se o registro estiver logicamente removido, não deve ser exibido
+    if(registroDados.removido == '1'){
+        MensagemRegistroNaoEncontrado();
+        LiberarStringRegistro(&registroDados);
+        fclose(arquivoBIN);
+        return;
+    }
+
+    // Chama imprimirRegistro para exibir os campos do registro lido
+    ImprimirRegistro(&registroDados);
+
+    LiberarStringRegistro(&registroDados);
+    fclose(arquivoBIN);
+}

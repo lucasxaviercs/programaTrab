@@ -84,8 +84,59 @@ void LiberarControlePares(ControlePares *controlePares){
     controlePares = NULL;
 }
 
+void ImprimirRegistro(const Registro *registroDados){
+    // Campos fixos, quando -1, imprime NULO
+    // Campos variáveis, quando NULL, imprime NULO
+    
+    if(registroDados->codEstacao == -1)
+        printf("NULO ");
+    else
+        printf("%d ", registroDados->codEstacao);
+
+    
+    if(registroDados->nomeEstacao == NULL)
+        printf("NULO ");
+    else
+        printf("%s ", registroDados->nomeEstacao);
+
+    if(registroDados->codLinha == -1)
+        printf("NULO ");
+    else
+        printf("%d ", registroDados->codLinha);
+
+    if(registroDados->nomeLinha == NULL)
+        printf("NULO ");
+    else
+        printf("%s ", registroDados->nomeLinha);
+
+    if(registroDados->codProxEstacao == -1)
+        printf("NULO ");
+    else
+        printf("%d ", registroDados->codProxEstacao);
+
+    if(registroDados->distProxEstacao == -1)
+        printf("NULO ");
+    else
+        printf("%d ", registroDados->distProxEstacao);
+
+    if(registroDados->codLinhaIntegra == -1)
+        printf("NULO ");
+    else
+        printf("%d ", registroDados->codLinhaIntegra);
+
+    // Último campo sem espaço no final e /n
+    if(registroDados->codEstIntegra == -1)
+        printf("NULO\n");
+    else
+        printf("%d\n", registroDados->codEstIntegra);
+}
+
 void MensagemErro(){
     printf("Falha no processamento do arquivo.\n");
+}
+
+void MensagemRegistroNaoEncontrado(){
+    printf("Registro inexistente.\n");
 }
 
 char VerificaEOF(FILE *arquivo){

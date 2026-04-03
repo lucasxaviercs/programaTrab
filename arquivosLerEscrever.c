@@ -91,6 +91,40 @@ Header LerCabecalhoBIN(FILE *arquivoBIN, const Header cabecalho){
     return cabecalho;
 }
 
+Registro LerRegistroBIN(FILE *arquivoBIN, Registro registroDados){
+    // Leitura dos campos de tamanho fixo
+    fread(&registroDados.removido, sizeof(char), 1, arquivoBIN);
+    fread(&registroDados.proximo, sizeof(int), 1, arquivoBIN);
+    fread(&registroDados.codEstacao, sizeof(int), 1, arquivoBIN);
+    fread(&registroDados.codLinha, sizeof(int), 1, arquivoBIN);
+    fread(&registroDados.codProxEstacao, sizeof(int), 1, arquivoBIN);
+    fread(&registroDados.distProxEstacao, sizeof(int), 1, arquivoBIN);
+    fread(&registroDados.codLinhaIntegra, sizeof(int), 1, arquivoBIN);
+    fread(&registroDados.codEstIntegra, sizeof(int), 1, arquivoBIN);
+
+    // Leitura dos campos de tamanho variável:
+    // primeiro lê o int que indica o tamanho, depois aloca e lê a string
+    fread(&registroDados.tamNomeEstacao, sizeof(int), 1, arquivoBIN);
+    if(registroDados.tamNomeEstacao > 0){
+        registroDados.nomeEstacao = malloc((registroDados.tamNomeEstacao + 1) * sizeof(char));
+        fread(registroDados.nomeEstacao, sizeof(char), registroDados.tamNomeEstacao, arquivoBIN);
+        registroDados.nomeEstacao[registroDados.tamNomeEstacao] = '\0';
+    } else {
+        registroDados.nomeEstacao = NULL;
+    }
+
+    fread(&registroDados.tamNomeLinha, sizeof(int), 1, arquivoBIN);
+    if(registroDados.tamNomeLinha > 0){
+        registroDados.nomeLinha = malloc((registroDados.tamNomeLinha + 1) * sizeof(char));
+        fread(registroDados.nomeLinha, sizeof(char), registroDados.tamNomeLinha, arquivoBIN);
+        registroDados.nomeLinha[registroDados.tamNomeLinha] = '\0';
+    } else {
+        registroDados.nomeLinha = NULL;
+    }
+
+    return registroDados;
+}
+
 Registro LerRegistroCSV(FILE *arquivoCSV, Registro registroDados){
     char *buffer = malloc(512 * sizeof(char));
     if(buffer == NULL){

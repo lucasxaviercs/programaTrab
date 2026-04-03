@@ -4,7 +4,7 @@
 int main(int argc, char *argv[]) {
     int funcionalidade = atoi(argv[1]);
     switch (funcionalidade) {
-        case 1:
+        case 1: 
             printf("Funcionalidade 1 selecionada.\n");
             break;
         case 2:
