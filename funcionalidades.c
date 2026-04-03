@@ -26,7 +26,7 @@ void CreateTable(char *arquivoEntrada, char *arquivoSaida){
 
     // inicializamos estruturas auxiliares que nos vão ajudar a determinar nroEstacoes e nroParesEstacoes
     ControleEstacoes *controleEstacoes = InicializarControleEstacoes();
-    ControlePares *controlePares = InicializarControlePares
+    ControlePares *controlePares = InicializarControlePares();
 
     // "RESERVAMOS" OS PRIMEIROS 17 BYTES (0-16) DO ARQUIVO BINÁRIAO PARA O CABEÇALHO
     EscreverCabecalhoBIN(arquivoBIN, &cabecalho);

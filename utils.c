@@ -77,6 +77,13 @@ void RegistrarParUnico(ControlePares *controlePares, int codigoEstacaoOrigem, in
     controlePares->totalParesUnicos++;
 }
 
+void LiberarControlePares(ControlePares *controlePares){
+    free(controlePares->listaParesUnicos);
+    controlePares->listaParesUnicos = NULL;
+    free(controlePares);
+    controlePares = NULL;
+}
+
 void MensagemErro(){
     printf("Falha no processamento do arquivo.\n");
 }
