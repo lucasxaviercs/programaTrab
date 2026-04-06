@@ -41,17 +41,6 @@ void RegistrarEstacaoUnica(ControleEstacoes *controleEstacoes, const char *nomeE
     controleEstacoes->totalEstacoesUnicas++;
 }
 
-void LiberarControleEstacoes(ControleEstacoes *controleEstacoes){
-    for (int i = 0; i < controleEstacoes->totalEstacoesUnicas; i++){
-        free(controleEstacoes->listaNomesUnicos[i]);
-        controleEstacoes->listaNomesUnicos[i] = NULL;
-    }
-    free(controleEstacoes->listaNomesUnicos);
-    controleEstacoes->listaNomesUnicos = NULL;
-    free(controleEstacoes);
-    controleEstacoes = NULL;
-}
-
 void RegistrarParUnico(ControlePares *controlePares, int codigoEstacaoOrigem, int codigoEstacaoDestino){
     // Ignora o registro se algum dos códigos for nulo
     if (codigoEstacaoOrigem == -1 || codigoEstacaoDestino == -1) return;
@@ -77,6 +66,17 @@ void RegistrarParUnico(ControlePares *controlePares, int codigoEstacaoOrigem, in
     controlePares->totalParesUnicos++;
 }
 
+void LiberarControleEstacoes(ControleEstacoes *controleEstacoes){
+    for (int i = 0; i < controleEstacoes->totalEstacoesUnicas; i++){
+        free(controleEstacoes->listaNomesUnicos[i]);
+        controleEstacoes->listaNomesUnicos[i] = NULL;
+    }
+    free(controleEstacoes->listaNomesUnicos);
+    controleEstacoes->listaNomesUnicos = NULL;
+    free(controleEstacoes);
+    controleEstacoes = NULL;
+}
+
 void LiberarControlePares(ControlePares *controlePares){
     free(controlePares->listaParesUnicos);
     controlePares->listaParesUnicos = NULL;
@@ -84,6 +84,22 @@ void LiberarControlePares(ControlePares *controlePares){
     controlePares = NULL;
 }
 
+char VerificaEOF(FILE *arquivo){
+    char ch = 0;
+    ch = fgetc(arquivo); // Lê os caracteres do arquivo e retorna (-1) ou um caractere válido
+    
+    // Após a leitura, o ponteiro é reposicionado, ou seja, ele verifica se já é o final do arquivo
+    // sem consumir o caractere válido("visualização antecipada do próximo caractere")
+    fseek(arquivo, -1, SEEK_CUR);
+
+    if (ch == EOF){
+        return 0; // EOF atingido
+    }else {
+        return 1; // Ainda tem dados
+    }
+}
+
+// Função que recebe um registro de dados e imprime seus campos no formato especificado e tratando campos nulos
 void ImprimirRegistro(const Registro *registroDados){
     // Campos fixos, quando -1, imprime NULO
     // Campos variáveis, quando NULL, imprime NULO
@@ -93,7 +109,6 @@ void ImprimirRegistro(const Registro *registroDados){
     else
         printf("%d ", registroDados->codEstacao);
 
-    
     if(registroDados->nomeEstacao == NULL)
         printf("NULO ");
     else
@@ -131,6 +146,8 @@ void ImprimirRegistro(const Registro *registroDados){
         printf("%d\n", registroDados->codEstIntegra);
 }
 
+// MENSAGENS DE ERRO
+
 void MensagemErro(){
     printf("Falha no processamento do arquivo.\n");
 }
@@ -139,20 +156,7 @@ void MensagemRegistroNaoEncontrado(){
     printf("Registro inexistente.\n");
 }
 
-char VerificaEOF(FILE *arquivo){
-    char ch = 0;
-    ch = fgetc(arquivo); // Lê os caracteres do arquivo e retorna (-1) ou um caractere válido
-    
-    // Após a leitura, o ponteiro é reposicionado, ou seja, ele verifica se já é o final do arquivo
-    // sem consumir o caractere válido("visualização antecipada do próximo caractere")
-    fseek(arquivo, -1, SEEK_CUR);
-
-    if (ch == EOF){
-        return 0; // EOF atingido
-    }else {
-        return 1; // Ainda tem dados
-    }
-}
+// FUNÇÕES FORNECIDAS PARA O TRABALHO 
 
 /*
  * Você não precisa entender o código dessa função.
