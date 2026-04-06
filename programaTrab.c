@@ -3,27 +3,37 @@
 
 #include "funcionalidades.h"
 
-int main(int argc, char *argv[]) {
-    // Lê o argumento da linha de comando para saber qual funcionalidade executar
-    int funcionalidade = atoi(argv[1]);
+int main(int argc, char *argv[]){
+    int funcionalidade;
+
+    char *arquivoEntrada = malloc(100 * sizeof(char));
+    char *arquivoSaida = malloc(100 * sizeof(char));
+
+    if(scanf("%d", &funcionalidade) != 1) return 0;
 
     switch (funcionalidade) {
         case CREATE_TABLE: 
-            CreateTable(argv[2], argv[3]);
+            scanf("%s %s", arquivoEntrada, arquivoSaida);
+            CreateTable(arquivoEntrada, arquivoSaida);
             break;
 
         case SELECT_FROM:
-            SelectFrom(argv[2]);
+            scanf("%s", arquivoEntrada);
+            SelectFrom(arquivoEntrada);
             break;
 
         case SELECT_WHERE:
-            printf("Funcionalidade 3 selecionada.\n");
+        {
+            int nroBuscas = 0;
+            scanf("%s %d", arquivoEntrada, &nroBuscas);
+            SelectWhere(arquivoEntrada, nroBuscas);
             break;
-
+        }
         case RECUPERACAO_RRN:
         {
-            int RRN = atoi(argv[3]);
-            RecuperacaoRRN(argv[2], RRN);
+            int RRN;
+            scanf("%s %d", arquivoEntrada, &RRN);
+            RecuperacaoRRN(arquivoEntrada, RRN);
             break;
         }
         
@@ -31,4 +41,10 @@ int main(int argc, char *argv[]) {
             printf("Funcionalidade inválida.\n");
             break;
     }
+
+    free(arquivoEntrada);
+    arquivoEntrada = NULL;
+    free(arquivoSaida);
+    arquivoSaida = NULL;
+
 }
