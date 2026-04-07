@@ -1,5 +1,7 @@
 #include "utils.h"
 
+/*Cria e prepara o array de armazenamento de nomes de estações únicas.
+Retornando o endereço dessa nova lista na memória*/
 ControleEstacoes *InicializarControleEstacoes()
 {
     ControleEstacoes *controleEstacoes = malloc(sizeof(ControleEstacoes));
@@ -9,6 +11,8 @@ ControleEstacoes *InicializarControleEstacoes()
     return controleEstacoes;
 }
 
+/*Verifica se o nome da estação já está armazenado. Caso seja novidade, adiciona na lista e faz
+uma verificação se é necessário aumentar o espaço.*/
 void RegistrarEstacaoUnica(ControleEstacoes *controleEstacoes, const char *nomeEstacao){
     if (nomeEstacao == NULL)
         return;
@@ -36,6 +40,8 @@ void RegistrarEstacaoUnica(ControleEstacoes *controleEstacoes, const char *nomeE
     controleEstacoes->totalEstacoesUnicas++;
 }
 
+/*Varre a lista de estações e limpando cada string individualmente e
+destrói a lista principal para liberar memória*/
 void LiberarControleEstacoes(ControleEstacoes *controleEstacoes){
     for (int i = 0; i < controleEstacoes->totalEstacoesUnicas; i++)
     {
@@ -49,6 +55,8 @@ void LiberarControleEstacoes(ControleEstacoes *controleEstacoes){
 }
 
 
+/*Cria a lista que irá guardar os trajetos únicos (COMBINAÇÃO DE ESTAÇÕES).
+Retornando o endereço dessa estrutura.*/
 ControlePares *InicializarControlePares(){
     ControlePares *controlePares = malloc(sizeof(ControlePares));
     controlePares->capacidadeMaxima = 150;
@@ -57,6 +65,8 @@ ControlePares *InicializarControlePares(){
     return controlePares;
 }
 
+/*Avalia a combinação entre o código origem e destino, salvando se o trajeto for novidade.
+Faz uma verificação se é necessário aumentar o espaço.*/
 void RegistrarParUnico(ControlePares *controlePares, int codigoEstacaoOrigem, int codigoEstacaoDestino){
     // Ignora o registro se algum dos códigos for nulo
     if (codigoEstacaoOrigem == -1 || codigoEstacaoDestino == -1)
@@ -86,6 +96,7 @@ void RegistrarParUnico(ControlePares *controlePares, int codigoEstacaoOrigem, in
     controlePares->totalParesUnicos++;
 }
 
+/*Desaloca o vetor contendo os trajetos únicos*/
 void LiberarControlePares(ControlePares *controlePares){
     free(controlePares->listaParesUnicos);
     controlePares->listaParesUnicos = NULL;
@@ -94,6 +105,7 @@ void LiberarControlePares(ControlePares *controlePares){
 }
 
 
+/*Apaga as strings de um registro e zera os ponteiros por segurança*/
 void LiberarStringRegistro(Registro *registroDados){
     if (registroDados == NULL) return;
 
@@ -110,6 +122,8 @@ void LiberarStringRegistro(Registro *registroDados){
 }
 
 
+/*Lê os pares de "campo" e "valor" solicitados na filtragem capturando a entrada com aspas 
+e salva isso em um vetor de struct de tamanho dimensionado pela quantidade de critérios passados*/
 void LerCriteriosBusca(CriterioBusca *criterios, int qtdCriterios){
     for(int i = 0; i < qtdCriterios; i++){
         scanf("%s", criterios[i].nomeDoCampo);
@@ -130,8 +144,10 @@ void LerCriteriosBusca(CriterioBusca *criterios, int qtdCriterios){
     }
 }
 
+/*Compara o valor registrado em disco com a condição de busca exigida pelo usuário.
+Retornando 1 caso o registro atenda a condição exigida, ou 0 caso não satisfaça as condições exigidas*/
 int VerificaCriterioBusca(const Registro *registroDados, const char *nomeDoCampo, const char *valorBuscado){
-    // Retornaremos 1 se o campo atende ao critério buscado, caso contrário retornaremos 0
+    // Retornaremos 1 se o registro atende ao critério buscado, caso contrário retornaremos 0
 
     //A função ScanQuoteString transformará a entrada "NULO" em uma string vazia
     // Portanto, se o tamanho for 0, o usuário está buscando NULO
@@ -189,6 +205,8 @@ int VerificaCriterioBusca(const Registro *registroDados, const char *nomeDoCampo
 }
 
 
+/*Exibe os campos de um registro na tela, substituindo -1 ou NULL,
+pela palavra "NULO"*/
 void ImprimirRegistro(const Registro *registroDados){
     // Campos fixos, quando -1, imprime NULO
     // Campos variáveis, quando NULL, imprime NULO
@@ -235,11 +253,13 @@ void ImprimirRegistro(const Registro *registroDados){
         printf("%d\n", registroDados->codEstIntegra);
 }
 
+/*Imprime a mensagem caso haja algum erro na abertura do arquivo*/
 void MensagemErro()
 {
     printf("Falha no processamento do arquivo.\n");
 }
 
+/*Imprime a mensagem quando a busca do usuário não encontra nenhum resultado*/
 void MensagemRegistroNaoEncontrado()
 {
     printf("Registro inexistente.\n");
