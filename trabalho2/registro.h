@@ -21,3 +21,7 @@
         int tamNomeLinha; // tamanho do campo nomeLinha
         char *nomeLinha; // nome da linha
     } Registro;
+
+    void LerRegistroBIN(FILE *arquivoBIN, Registro *registroDados);
+    void LerRegistroCSV(FILE *arquivoCSV, Registro *registroDados);
+    void EscreverRegistroBIN(FILE* arquivoBIN, const Registro* registroDados);

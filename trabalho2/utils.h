@@ -45,3 +45,5 @@
     char VerificaEOF(FILE *f);
     void BinarioNaTela(char *arquivo);
     void ScanQuoteString(char *str);
+
+    void IgnorarLinhaZeroCSV(FILE *arquivoCSV);

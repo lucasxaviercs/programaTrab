@@ -2,7 +2,7 @@
 
     #include "header.h"
     #include "registro.h"
-    #include "arquivosLerEscrever.h"
+    #include "ioDados.h"
     #include "utils.h"
 
     #define CREATE_TABLE 1

@@ -1,6 +1,5 @@
 #include "funcionalidades.h"
 
-
 /*Lê os registros de um arquivo CSV e constrói a "tabela" no formato de um arquivo binário.
 Tendo todo o controle de inicializar, contabilizar, atualizar os dados do cabeçalho e dos registros
 para realizar a gravação no arquivo binário*/

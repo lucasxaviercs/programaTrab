@@ -14,3 +14,8 @@
         int nroEstacoes; // indica a quantidade de estações diferentes no arquivo de dados
         int nroParesEstacao; // indica a quantidade de pares (codEstacao, codProxEstacao) 
     } Header;
+
+    Header *InicializarCabecalho();
+
+    void LerCabecalhoBIN(FILE *arquivoBIN, Header *cabecalho);
+    void EscreverCabecalhoBIN(FILE* arquivoBIN, const Header* cabecalho);
