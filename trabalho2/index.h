@@ -17,7 +17,20 @@
         int RRN; // RRN do registro correspondente ao código da estação
     } IndexRegistro;
 
+    // cria o arquivo de índice a partir do arquivo de dados, usando codEstacao para indexar
     void CriarIndex(FILE *arquivoDados, FILE* arquivoIndex);
+
+    // carrega o arquivo de índice em memória primária para uso
+    void CarregarIndex(FILE *arquivoIndex, IndexRegistro **registros, int *totalRegs);
+    // reescreve o arquivo de índice no disco após operações
+    void ReescritaIndex(FILE *arquivoIndex, IndexRegistro *registros, int totalRegs);
+
+    // operações de busca, inserção e remoção no índice
     int BuscarRegistroIndex(FILE *arquivoIndex, int codEstacao);
     void InserirRegistroIndex(FILE *arquivoIndex, int codEstacao, int RRN);
     void RemoverRegistroIndex(FILE *arquivoIndex, int codEstacao);
+
+    // função auxiliar para ler um registro do arquivo de índices para struct
+    void LerRegistroIndex(FILE *arquivoIndex, IndexRegistro *registro);
+    // função auxiliar para escrever um registro da struct para o arquivo de índices
+    void EscreverRegistroIndex(FILE *arquivoIndex, IndexRegistro *registro);
