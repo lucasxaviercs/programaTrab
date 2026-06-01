@@ -28,17 +28,18 @@ void CreateTable(char *arquivoEntrada, char *arquivoSaida){
     ControleEstacoes *controleEstacoes = InicializarControleEstacoes();
     ControlePares *controlePares = InicializarControlePares();
 
-    // "RESERVAMOS" OS PRIMEIROS 17 BYTES (0-16) DO ARQUIVO BINÁRIAO PARA O CABEÇALHO
-    EscreverCabecalhoBIN(arquivoBIN, cabecalho);
+    // "RESERVAMOS" OS PRIMEIROS 17 BYTES (0-16) DO ARQUIVO BINÁRIO PARA O CABEÇALHO
+    fseek(arquivoBIN, TAM_CABECALHO, SEEK_SET);
 
     // DESCARTAMOS A LINHA ZERO DO CSV QUE CONTÉM APENAS AS NOMENCLATURAS DAS COLUNAS
     IgnorarLinhaZeroCSV(arquivoCSV);
+
+    Registro registroDados; // Utilizaremos como registro auxiliar para não trazer tudo do disco deuma vez pra memória primária 
 
     // LOOP PARA PROCESSAR OS DADOS DO ARQUIVO DE ENTRADA
     // vamos obter os registros de dados do arquivo CSV e escrever eles no arquivo binário
     while(VerificaEOF(arquivoCSV)){
 
-        Registro registroDados;
         LerRegistroCSV(arquivoCSV, &registroDados);
         if(registroDados.removido == '1'){ // se o registro está logicamente removido
             LiberarStringRegistro(&registroDados);
@@ -61,7 +62,7 @@ void CreateTable(char *arquivoEntrada, char *arquivoSaida){
     cabecalho->nroParesEstacao = controlePares->totalParesUnicos;
     cabecalho->status = '1'; // Finalizando o uso do arquivo
 
-    EscreverCabecalhoBIN(arquivoBIN, cabecalho); // O fseek dentro da função nos garante que irá sobrescrever os primeiro 17 bytes que é referente ao cabeçalho mesmo
+    EscreverCabecalhoBIN(arquivoBIN, cabecalho); // O fseek dentro da função nos garante que irá sobrescrever os primeiro 17 bytes que é refente ao próprio cabeçalho
 
     //REALIZANDO OS ÚLTIMOS DESALOCAMENTO DE MEMÓRIA E FECHANDO OS ARQUIVOS
     LiberarControleEstacoes(controleEstacoes);
@@ -110,12 +111,13 @@ void SelectFrom(char *arquivoEntrada){
     // LOOP PARA PROCESSAR OS DADOS DO REGISTRO
     for(int i = 0; i < cabecalho.proxRRN; i++){
 
-        // Fazemos a leitura do registro no arquivo (disco) e salvamos na RAM
+        // Fazemos a leitura do registro no arquivo (disco), salvamos na RAM
+        // e fazemos a verificação se o registro está removido ou não
         LerRegistroBIN(arquivoBIN, &registroDados);
 
         // Só iremos imprimir se não estiver logicamente removido
         // '1' == LOGICAMENTE REMOVIDO e '0' == NÃO ESTÁ MARCADO COMO REMOVIDO
-        if(registroDados.removido != '1'){
+        if(registroDados.removido != '1'){ // apenas uma segurança a mais para confirmar que NÃO ESTÁ REMOVIDO
             ImprimirRegistro(&registroDados);
             contadorImpressos++;
         }
@@ -167,6 +169,15 @@ void SelectWhere(char *arquivoEntrada, int nroBuscas){
         // Lemos os critérios de busca passados (FILTRO PASSADOS)
         LerCriteriosBusca(criterios, m_nroCriterios);
 
+        // Verificamos se a busca atual contém o campo codEstacao
+        int buscaID = 0;
+        for(int c = 0; c < m_nroCriterios; c++){
+            if(strcmp(criterios[c].nomeDoCampo, "codEstacao") == 0){
+                buscaID = 1;
+                break;
+            }
+        }
+
         // Posicionamos o ponteiro do arquivo para o início dos dados (IGNORANDO O CABEÇALHO = 17 Bytes)
         fseek(arquivoBIN, TAM_CABECALHO, SEEK_SET);
 
@@ -178,11 +189,11 @@ void SelectWhere(char *arquivoEntrada, int nroBuscas){
             registroDados.nomeEstacao = NULL;
             registroDados.nomeLinha = NULL;
 
-            // Preenche a struct com os dados lido do arquvio
+            // Preenche a struct com os dados lido do arquvio e verifica se não está removido
             LerRegistroBIN(arquivoBIN, &registroDados);
             
             // Ignoramos todos os registros inválidos
-            if(registroDados.removido == '0'){
+            if(registroDados.removido != '1'){ // apenas uma segurança a mais para confirmar que NÃO ESTÁ REMOVIDO
                 int atendeTodosCriterios = 1; // Assumimos que registro serve (true), até que se prove o contrário
 
                 // Verifica o registro atual a partir dos criterios de busca que foram passados
@@ -198,6 +209,11 @@ void SelectWhere(char *arquivoEntrada, int nroBuscas){
                 if(atendeTodosCriterios == 1){
                     ImprimirRegistro(&registroDados);
                     registroEncontrado = 1; // Sinalizamos que encontramos um que atende ao filtro passado
+
+                    if(buscaID == 1){ // Caso o ID da busca (codEstacao) bater, não ficamos percorrendo os demais registro
+                        LiberarStringRegistro(&registroDados);
+                        break;
+                    }
                 }
             } 
 

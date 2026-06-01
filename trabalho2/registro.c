@@ -6,9 +6,18 @@ void LerRegistroBIN(FILE *arquivoBIN, Registro *registroDados){
     // Para não ficar lendo LIXO '$'
     int espacoUtilizado = 0;
    
-    // Leitura dos campos de tamanho fixo
+    // Leitura do campo de remoção
     fread(&registroDados->removido, sizeof(char), 1, arquivoBIN);
     espacoUtilizado += sizeof(char);
+    // Checagem se o registro está marcado como removido ou não
+    if(registroDados->removido == '1'){// se removido
+        fseek(arquivoBIN, TAM_REGISTRO - espacoUtilizado, SEEK_CUR); // altera o cursor para o próximo registro
+        registroDados->nomeEstacao == NULL; // prevenção de lixo nos ponteiros
+        registroDados->nomeLinha == NULL;   // prevenção de lixo nos ponteiros
+        return;
+    }
+    
+    // Leitura dos campos de tamanho fixo
     fread(&registroDados->proximo, sizeof(int), 1, arquivoBIN);
     espacoUtilizado += sizeof(int);
     fread(&registroDados->codEstacao, sizeof(int), 1, arquivoBIN);
